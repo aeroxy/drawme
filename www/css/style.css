@@ -1,0 +1,77 @@
+* {
+	font-family: 'Roboto Slab', serif;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+body {
+	background-color: #0099bb;
+	color: #bbeeff;
+}
+.title {
+	text-align: center;
+}
+.title h1 {
+	font-size: 4em;
+}
+.title p {
+	opacity: 0;
+}
+.canvas {
+	position: absolute;
+	top: 150px;
+	cursor:url(pen.cur),auto;
+	width: 960px;
+	height: 720px;
+	border-color: #bbeeff;
+	border-width: 1px;
+}
+#canvas {	
+}
+#notification {
+	position: fixed;
+	bottom: 50px;
+	right: 25px;
+	display: none;
+	width: 300px;
+	height: 35px;
+	background-color: rgba(255,255,255,.9);
+	color: #000;
+	border-radius:10px;
+	padding: 16px 20px 16px 20px;
+	overflow: hidden;
+	font-size: 1.25em;
+}
+.options {
+	cursor: default;
+	position: absolute;
+	top: 875px;
+	text-align: center;
+}
+.options span {
+	cursor: pointer;
+	padding-left: 10px;
+	margin-left: 10px;
+	border-left: 1px solid #000;
+	text-decoration: none;
+	color: #fff;
+}
+.options span:first-child {
+	padding-left: 0;
+	margin-left: 0;
+	border-left: none;
+}
+.options span:hover {
+	text-decoration: underline;
+}
+.column-left {
+	display: inline; 
+	float: left;
+}
+.column-right {
+	display: inline; 
+	float: right;
+}
