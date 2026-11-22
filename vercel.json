@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
+  "regions": ["sin1"],
+  "redirects": [
+    { "source": "/about.html", "destination": "https://jspaint.app/about.html" },
+    { "source": "/privacy.html", "destination": "https://jspaint.app/privacy.html" }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/server" },
+    { "source": "/auth/aero", "destination": "/auth.html" },
+    { "source": "/src/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/src/:path*" },
+    { "source": "/lib/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/lib/:path*" },
+    { "source": "/images/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/images/:path*" },
+    { "source": "/styles/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/styles/:path*" },
+    { "source": "/localization/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/localization/:path*" },
+    { "source": "/help/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/help/:path*" },
+    { "source": "/audio/:path*", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/audio/:path*" },
+    { "source": "/favicon.ico", "destination": "https://cdn.jsdelivr.net/gh/1j01/jspaint@53be67ab8c47cc0d2168899e7481bc04839c4c81/favicon.ico" }
+  ]
+}

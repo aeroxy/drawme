@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Signing in – drawme-1998</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #008080;
+      font: 12px "Segoe UI", Tahoma, sans-serif;
+    }
+    .box {
+      min-width: 220px;
+      max-width: 340px;
+      padding: 14px 18px;
+      background: #c0c0c0;
+      color: #000;
+      border: 2px outset #fff;
+    }
+    a {
+      color: #000080;
+    }
+  </style>
+</head>
+<body>
+  <div class="box" role="status"><p id="message">Signing in…</p></div>
+  <script>
+    // Aero sends the browser here with its answer in the fragment. Take it
+    // out of the address bar before anything else, hand the token to the
+    // API (which keeps it in a cookie no script can read), and go back.
+    (async () => {
+      const answer = new URLSearchParams(location.hash.slice(1));
+      history.replaceState(null, "", location.pathname);
+      const message = document.getElementById("message");
+      const fail = (text) => {
+        const back = Object.assign(document.createElement("a"), { href: "/", textContent: "Back to drawme-1998" });
+        message.replaceChildren(`${text} `, back);
+      };
+      const token = answer.get("aero_identity");
+      const state = answer.get("state");
+      if (!token || !state) {
+        return fail(answer.get("error") === "access_denied" ? "Signing in was cancelled." : "Aero didn't send a sign-in.");
+      }
+      try {
+        const response = await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, state }),
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) return fail(body.error || "Signing in didn't work.");
+        location.replace(`/${body.return || ""}`);
+      } catch {
+        fail("Couldn't reach drawme-1998.");
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Vercel builds the function from api/ and src/, and serves public/.
+target/**
+tests/
+.env

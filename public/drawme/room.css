@@ -1,0 +1,92 @@
+/* drawme's additions to jspaint: the room's field in the status bar, the
+   other person's pointer, and the cover behind questions that come first. */
+
+.drawme-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+.drawme-status-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drawme-mic {
+  flex: none;
+  min-width: 0;
+  min-height: 0;
+  padding: 0 6px;
+  font: inherit;
+}
+
+.drawme-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.drawme-cursor[hidden] {
+  display: none;
+}
+
+.drawme-cursor span {
+  margin-top: 18px;
+  padding: 0 3px;
+  border: 1px solid #000;
+  background: #ffffe1;
+  color: #000;
+  font: 11px "Segoe UI", Tahoma, sans-serif;
+  white-space: nowrap;
+}
+
+.drawme-cursor span:empty {
+  display: none;
+}
+
+.drawme-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #008080;
+}
+
+/* jspaint's windows don't wrap text; these dialogs are prose, set like its
+   message boxes. */
+.drawme-dialog .window-content {
+  white-space: normal;
+  font-family: "MS Sans Serif", Arial, sans-serif;
+  font-size: 14px;
+}
+
+.drawme-dialog .window-content > form > div:first-child {
+  width: min(24rem, 80vw);
+  box-sizing: border-box;
+}
+
+.drawme-dialog p {
+  margin: 0 0 0.75em;
+}
+
+.drawme-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.75em;
+}
+
+.drawme-field input,
+.drawme-link {
+  flex: 1;
+  width: 100%;
+  min-width: 12rem;
+  box-sizing: border-box;
+}
