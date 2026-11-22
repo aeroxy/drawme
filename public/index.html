@@ -7,7 +7,7 @@
 
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' blob: https://www.youtube.com;
+    script-src 'self' blob: https://www.youtube.com https://www.googletagmanager.com;
     frame-src 'self' https://youtube.com https://www.youtube.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: blob: http: https:;
@@ -40,6 +40,7 @@
   <meta property="og:title" content="drawme-1998">
 
   <script src="src/error-handling-basic.js"></script>
+  <script src="drawme/analytics.js"></script>
   <script type="module" src="src/theme.js"></script>
 </head>
 

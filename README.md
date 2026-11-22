@@ -25,8 +25,9 @@ Draw together, two at a time, in a classic paint program, and talk while you dra
 | Paint program | JS Paint at commit `53be67a`, from jsDelivr. `vercel.json` rewrites its folders there, so the browser sees one origin (its web workers and relative paths need that) and Vercel's CDN keeps each file, which jsDelivr marks immutable for a year. This repository holds only what differs: `public/index.html`, JS Paint's page with the room module in place of its sessions, and `public/drawme/`. Moving to another commit means changing `vercel.json` and `JSPAINT_COMMIT` in `src/bin/dev.rs`, which a test keeps in step |
 | API | Rust: axum 0.8 as one Vercel Function (`api/server.rs`) through `vercel_runtime`'s axum layer, in `sin1`. Vercel's Rust runtime is in beta |
 | Rooms | Redis (Upstash) over TLS. Every operation is one Lua script, so it runs atomically. Keys expire by themselves: a room outlives its last use by a day, and a peer counts as gone 90 s after it last asked for its inbox |
-| Realtime | WebRTC between the two browsers: a reliable data channel for pixels, an unreliable one for pointers, and one audio line. STUN from Cloudflare and Google, and Cloudflare's TURN relay once set up, for networks that block direct connections, with credentials minted per room so the key stays on the server |
+| Realtime | WebRTC between the two browsers: a reliable data channel for pixels, an unreliable one for pointers, and one audio line. STUN from Cloudflare and Google, and a TURN relay for networks that block direct connections once `TURN_PROVIDER` names one: Cloudflare's, with credentials minted on request so its key stays on the server, or Metered's, with one credential made in its dashboard. A relay that is missing, misconfigured or out of quota means STUN only, never an error (`src/turn.rs`) |
 | Sign-in | [Aero](https://aero.oops.wtf)'s Login with Aero: identity only. The token (PASETO `v4.local`: the visitor's email, encrypted with a key only Aero and drawme hold, valid 30 days) goes from the callback page straight to the API, which keeps it in an HttpOnly cookie. No script can read it, and the `sendBeacon` a closing page sends still carries it |
+| Analytics | Google Analytics, the same property as Aero's other sites and champt's, on the deployment only (not on a local server). It starts from code, after `auth.html` has taken a sign-in's token out of the address bar, and is told the page's address without query or fragment, so the first page view carries neither a token nor an invite link. Fragment changes after load, such as joining an invite room, were checked and sent nothing. `index.html`'s content security policy allows Google's script for it (`public/drawme/analytics.js`) |
 
 ## Local development
 
@@ -51,7 +52,7 @@ The API tests keep their keys under a prefix of their own and delete them afterw
 1. Import the repository as a Vercel project. `vercel.json` does the rest: Vercel builds `api/server.rs` as a function, serves `public/`, and rewrites `/api/*` to the function and JS Paint's folders to jsDelivr.
 2. Set `REDIS_URL` in the project's environment variables: an Upstash database's `rediss://` address, ideally in AWS Singapore (`ap-southeast-1`) to match the `sin1` function region.
 3. Register drawme on [Aero's Connect page](https://aero.oops.wtf/connect) under Login with Aero, with the callback `https://<your domain>/auth/aero`. Set the client id and the `k4.local.…` key it gives as `AERO_CLIENT_ID` and `AERO_LOGIN_KEY` in the project's environment variables, never in the repository. Until both are set, nobody can sign in.
-4. Optionally, create a TURN key in Cloudflare's Realtime dashboard and set `TURN_KEY_ID` and `TURN_KEY_API_TOKEN`. Without them, browsers connect with STUN only, which some networks block. Cloudflare's first 1,000 GB a month are free, and a voice call is a few dozen kilobits a second.
+4. Optionally, add a TURN relay, for people on networks that block direct connections. Set `TURN_PROVIDER` to `metered` with `METERED_APP` (the app's name) and `METERED_API_KEY` (a credential's API key, from its Show API Key in Metered's dashboard, not the Secret Key on its Developers page), or to `cloudflare` with `TURN_KEY_ID` and `TURN_KEY_API_TOKEN` (a TURN key from Cloudflare's Realtime dashboard, which asks for billing details). Unset, browsers connect with STUN only. Metered's trial plan is 500 MB a month, counting data both ways, which is a few hours of relayed calls; at the cap its relay stops until the next month. To switch provider, change `TURN_PROVIDER` and redeploy. If a credential leaks, someone can only use up its quota: disable it in the dashboard and make a new one.
 5. Deploy, or push to the production branch.
 
 ## API
@@ -78,7 +79,7 @@ Every call after `/api/session` needs the session cookie, and a `peer` answers o
 
 - A stroke shows on the other screen once it's finished: JS Paint draws a stroke in progress on a layer of its own and commits it on release. Pointers move live.
 - Undoing a stroke the other person has drawn over leaves their part, as it should. But if they then undo theirs, the part of yours they had covered can come back.
-- Without the TURN key, two people can't connect when one of their networks blocks direct connections.
+- Without a relay (`TURN_PROVIDER`), or once its quota is used up, two people can't connect when one of their networks blocks direct connections.
 
 ## License
 
