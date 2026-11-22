@@ -91,20 +91,30 @@ Object.assign(room.actions, {
 start();
 
 async function start() {
-  renderStatus();
-  await restoreDrawing();
+  // jspaint's window is already up, behind the cover index.html put in the
+  // page. Take over from it with one of ours, which the dialogs that follow sit
+  // above, and keep it until there is something else to look at: a dialog on a
+  // cover of its own, or the room. Without it jspaint's window shows while the
+  // server is asked who this is.
+  const cover = backdrop();
   try {
-    await api("GET", "/api/me");
-  } catch {
-    return; // Not signed in: the sign-in screen is up.
+    renderStatus();
+    await restoreDrawing();
+    try {
+      await api("GET", "/api/me");
+    } catch {
+      return; // Not signed in: the sign-in screen is up.
+    }
+    room.signedIn = true;
+    renderStatus();
+    nickname = (await store.get("nickname")) || (await askNickname({ required: true })) || "";
+    renderStatus();
+    const invite = inviteInAddress();
+    if (invite) await knock(invite);
+    else chooseMode();
+  } finally {
+    cover.remove();
   }
-  room.signedIn = true;
-  renderStatus();
-  nickname = (await store.get("nickname")) || (await askNickname({ required: true })) || "";
-  renderStatus();
-  const invite = inviteInAddress();
-  if (invite) knock(invite);
-  else chooseMode();
 }
 
 // ——— The server ————————————————————————————————————————————————
@@ -136,12 +146,17 @@ function setAddress(hash) {
 
 // ——— Signing in and the nickname ———————————————————————————————————
 
-/** A cover over the app, below the next window, for questions that come first. */
+/**
+ * A cover over the app, below the next window, for questions that come first.
+ * The first one also takes down the cover index.html put up for the page's
+ * first frames, in the same step, so no frame is left uncovered between them.
+ */
 function backdrop() {
   const cover = document.createElement("div");
   cover.className = "drawme-backdrop";
   cover.style.zIndex = String($Window.Z_INDEX++);
   document.body.append(cover);
+  document.getElementById("drawme-splash")?.remove();
   return cover;
 }
 

@@ -5,6 +5,24 @@
   <meta charset="utf-8">
   <title>drawme-1998</title>
 
+  <style>
+    /* A cover over everything for the page's first frames: jspaint builds its
+       window before anything can say whether to show a dialog, and it would
+       show through. room.js takes it down in the same step as it puts up its
+       own. The animation is the way out if that script never runs. */
+    html { background: #008080; }
+    #drawme-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      background: #008080;
+      animation: drawme-splash-out 0s 10s forwards;
+    }
+    @keyframes drawme-splash-out { to { visibility: hidden; } }
+    @media print { #drawme-splash { display: none; } }
+  </style>
+  <noscript><style>#drawme-splash { display: none; }</style></noscript>
+
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' blob: https://www.youtube.com https://www.googletagmanager.com;
@@ -41,17 +59,18 @@
 
   <script src="src/error-handling-basic.js"></script>
   <script src="drawme/analytics.js"></script>
+  <script src="drawme/later.js"></script>
   <script type="module" src="src/theme.js"></script>
 </head>
 
 <body>
+  <div id="drawme-splash"></div>
   <script src="lib/jquery-3.4.1.min.js"></script>
   <script src="lib/gif.js/gif.js"></script>
   <script src="lib/pako-2.0.3.min.js"></script>
   <script src="lib/UPNG.js"></script>
   <script src="lib/UTIF.js"></script>
   <script src="lib/bmp.js"></script>
-  <script src="lib/pdf.js/build/pdf.js"></script>
   <script src="lib/anypalette-0.6.0.js"></script>
   <script src="lib/FileSaver.js"></script>
   <script src="lib/font-detective.js"></script>

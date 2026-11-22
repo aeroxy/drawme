@@ -17,6 +17,7 @@ Draw together, two at a time, in a classic paint program, and talk while you dra
 | The other person's pointer shows on your canvas, with their nickname | `showCursor` in `public/drawme/room.js` |
 | The picture is kept in this browser's IndexedDB, as a PNG, so a reload doesn't lose it. Nothing about the picture ever reaches the server | `saveSoon` and `restoreDrawing` in `public/drawme/room.js`; `public/drawme/idb.js` |
 | File > New and File > Open stay in the room, and the new picture goes to the other person | `window.new_local_session` in `public/drawme/room.js` |
+| The first frames are a teal cover, not JS Paint's window: it covers the page from the first paint, and `room.js` swaps it for a cover of its own in the same step, keeping it until a dialog or the room takes over, so the window never shows while the server is asked who you are. `pdf.js`, which only opening a PDF needs, loads once the page is idle; `AnyPalette` can't wait, since `file-format-data.js` reads it on load | `#drawme-splash` in `public/index.html`; `backdrop` and `start` in `public/drawme/room.js`; `public/drawme/later.js` |
 
 ## What runs where
 
